@@ -1,0 +1,781 @@
+<?xml version="1.0"?>
+<objects>
+<!-- ('', 'zport', 'dmd', 'Devices', 'Web', 'SugarCRM') -->
+<object id='/zport/dmd/Devices/Web/SugarCRM' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+<property visible="True" type="string" id="cSugarPasswordueooeuoeu" >
+mypassword
+</property>
+<property visible="True" type="string" id="cBlaBLaBLa" >
+ueoaueou
+</property>
+<property visible="True" type="string" id="cantoheusn" >
+oaeueuooeueu
+</property>
+<property visible="True" type="lines" id="zDeviceTemplates" >
+['Device', 'SugarCRM']
+</property>
+<property visible="True" type="boolean" id="zPingMonitorIgnore" >
+True
+</property>
+<property visible="True" type="boolean" id="zSnmpMonitorIgnore" >
+True
+</property>
+<tomanycont id='rrdTemplates'>
+<object id='SugarCRM' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
+<property type="text" id="description" mode="w" >
+SugarCRM web transaction tests
+</property>
+<tomanycont id='datasources'>
+<object id='SugarCRM Basic Functions' module='ZenPacks.zenoss.ZenWebTx.datasources.WebTxDataSource' class='WebTxDataSource'>
+<property select_variable="sourcetypes" type="selection" id="sourcetype" mode="w" >
+WebTx
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="component" mode="w" >
+SugarCRM
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Status/Web
+</property>
+<property type="int" id="severity" mode="w" >
+3
+</property>
+<property type="string" id="commandTemplate" mode="w" >
+# Strip contents of all &lt;script&gt; tags from the html
+extend_with ignorescripts
+
+# Allows settings timers to create datapoints
+extend_with twilltiming
+
+# Allows scraping of values from html into datapoints
+extend_with twillextract
+
+# Hidden fields normally not writeable, but we need to set them in order
+# to submit some sugar forms
+config readonly_controls_writeable True
+
+# Start the transaction
+go http://${dev/id}/${dev/zSugarCRMBase}index.php?module=Accounts&amp;action=ListView 
+
+# Submit login page
+
+formvalue 1 user_name ${dev/zSugarCRMUsername}
+formvalue 1 user_password ${dev/zSugarCRMPassword}
+startTimer submitLoginTimer
+submit
+printTimer submitLoginTimer
+code 200                          # check server response code for OK status
+notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on page
+notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
+notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
+find "All Rights Reserved."       # footer text indicates entire page loaded
+extract submitLoginParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+
+# Go to accounts listing
+
+startTimer viewAccountsTimer
+go http://${dev/id}/${dev/zSugarCRMBase}index.php?module=Accounts&amp;action=ListView
+printTimer viewAccountsTimer
+code 200                          # check server response code for OK status
+notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on page
+notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
+notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
+find "All Rights Reserved."       # footer text indicates entire page loaded
+extract viewAccountsParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+
+# Bring up an account
+
+startTimer viewAccountTimer
+follow "${dev/zSugarCRMTestAccount}"
+printTimer viewAccountTimer
+code 200                          # check server response code for OK status
+find "${dev/zSugarCRMTestAccount}"             # make sure the correct record was returned
+notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on page
+notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
+notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
+find "All Rights Reserved."       # footer text indicates entire page loaded
+extract viewAccountParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+
+# Logout
+find "Logout"
+follow "Logout"
+code 200                          # check server response code for OK status
+notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on page
+notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
+notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
+find "All Rights Reserved."       # footer text indicates entire page loaded
+find "enter your user name"        # verify proper load of login page
+</property>
+<property type="int" id="cycletime" mode="w" >
+300
+</property>
+<property type="string" id="userAgent" mode="w" >
+ZenWebTx/1.0
+</property>
+<property type="int" id="webTxTimeout" mode="w" >
+180
+</property>
+<tomanycont id='datapoints'>
+<object id='available' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="rrdmax" mode="w" >
+1
+</property>
+</object>
+<object id='submitLoginParsedTime-time' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='submitLoginTimer' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='totalTime' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='viewAccountParsedTime-time' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='viewAccountTimer' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='viewAccountsParsedTime-time' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='viewAccountsTimer' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
+<tomanycont id='graphs'>
+<object id='Time for Basic Functions' module='Products.ZenModel.RRDGraph' class='RRDGraph'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_totalTime']
+</property>
+<property type="int" id="sequence" mode="w" >
+0
+</property>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="int" id="linewidth" mode="w" >
+1
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="boolean" id="summary" mode="w" >
+True
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="lines" id="colors" mode="w" >
+('#00cc00', '#0000ff', '#00ffff', '#ff0000', '#ffff00', '#cc0000', '#0000cc', '#0080c0', '#8080c0', '#ff0080', '#800080', '#0000a0', '#408080', '#808000', '#000000', '#00ff00', '#fb31fb', '#0080ff', '#ff8000', '#800000')
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+</object>
+<object id='Time to List Accounts' module='Products.ZenModel.RRDGraph' class='RRDGraph'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_viewAccountsParsedTime-time', 'SugarCRM Basic Functions_viewAccountsTimer']
+</property>
+<property type="int" id="sequence" mode="w" >
+2
+</property>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="int" id="linewidth" mode="w" >
+1
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="boolean" id="summary" mode="w" >
+True
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="lines" id="colors" mode="w" >
+('#00cc00', '#0000ff', '#00ffff', '#ff0000', '#ffff00', '#cc0000', '#0000cc', '#0080c0', '#8080c0', '#ff0080', '#800080', '#0000a0', '#408080', '#808000', '#000000', '#00ff00', '#fb31fb', '#0080ff', '#ff8000', '#800000')
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+</object>
+<object id='Time to Submit Login' module='Products.ZenModel.RRDGraph' class='RRDGraph'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_submitLoginParsedTime-time', 'SugarCRM Basic Functions_submitLoginTimer']
+</property>
+<property type="int" id="sequence" mode="w" >
+1
+</property>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="int" id="linewidth" mode="w" >
+1
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="boolean" id="summary" mode="w" >
+True
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="lines" id="colors" mode="w" >
+('#00cc00', '#0000ff', '#00ffff', '#ff0000', '#ffff00', '#cc0000', '#0000cc', '#0080c0', '#8080c0', '#ff0080', '#800080', '#0000a0', '#408080', '#808000', '#000000', '#00ff00', '#fb31fb', '#0080ff', '#ff8000', '#800000')
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+</object>
+<object id='Time to View Account' module='Products.ZenModel.RRDGraph' class='RRDGraph'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_viewAccountParsedTime-time', 'SugarCRM Basic Functions_viewAccountTimer']
+</property>
+<property type="int" id="sequence" mode="w" >
+3
+</property>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="int" id="linewidth" mode="w" >
+1
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="boolean" id="summary" mode="w" >
+True
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="lines" id="colors" mode="w" >
+('#00cc00', '#0000ff', '#00ffff', '#ff0000', '#ffff00', '#cc0000', '#0000cc', '#0080c0', '#8080c0', '#ff0080', '#800080', '#0000a0', '#408080', '#808000', '#000000', '#00ff00', '#fb31fb', '#0080ff', '#ff8000', '#800000')
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+</object>
+</tomanycont>
+<tomanycont id='thresholds'>
+<object id='slow account list' module='Products.ZenModel.MinMaxThreshold' class='MinMaxThreshold'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_viewAccountsParsedTime-time']
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="maxval" mode="w" >
+6
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Perf/Web
+</property>
+<property type="int" id="severity" mode="w" >
+3
+</property>
+<property type="int" id="escalateCount" mode="w" >
+0
+</property>
+</object>
+<object id='slow account view' module='Products.ZenModel.MinMaxThreshold' class='MinMaxThreshold'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_viewAccountParsedTime-time']
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="maxval" mode="w" >
+6
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Perf/Web
+</property>
+<property type="int" id="severity" mode="w" >
+3
+</property>
+<property type="int" id="escalateCount" mode="w" >
+0
+</property>
+</object>
+<object id='slow login' module='Products.ZenModel.MinMaxThreshold' class='MinMaxThreshold'>
+<property type="lines" id="dsnames" mode="w" >
+['SugarCRM Basic Functions_submitLoginParsedTime-time']
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="maxval" mode="w" >
+6
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Perf/Web
+</property>
+<property type="int" id="severity" mode="w" >
+3
+</property>
+<property type="int" id="escalateCount" mode="w" >
+0
+</property>
+</object>
+</tomanycont>
+<tomanycont id='graphDefs'>
+<object id='SugarCRM - Basic Functions' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<tomanycont id='graphPoints'>
+<object id='totalTime' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+2
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Total Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_totalTime
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='SugarCRM - Login' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<tomanycont id='graphPoints'>
+<object id='slow login' module='Products.ZenModel.ThresholdGraphPoint' class='ThresholdGraphPoint'>
+<property type="string" id="threshId" mode="w" >
+slow login
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+</object>
+<object id='submitLoginParsedTime-time' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+AREA
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Reported Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_submitLoginParsedTime-time
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='submitLoginTimer' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+2
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Actual Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_submitLoginTimer
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='SugarCRM - View All Accounts' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<tomanycont id='graphPoints'>
+<object id='slow account list' module='Products.ZenModel.ThresholdGraphPoint' class='ThresholdGraphPoint'>
+<property type="string" id="threshId" mode="w" >
+slow account list
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+</object>
+<object id='viewAccountsParsedTime-time' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+AREA
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Reported Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_viewAccountsParsedTime-time
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='viewAccountsTimer' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+2
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Actual Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_viewAccountsTimer
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='SugarCRM - View Single Account' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+seconds
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+3
+</property>
+<tomanycont id='graphPoints'>
+<object id='slow account view' module='Products.ZenModel.ThresholdGraphPoint' class='ThresholdGraphPoint'>
+<property type="string" id="threshId" mode="w" >
+slow account view
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+</object>
+<object id='viewAccountParsedTime-time' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+AREA
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Reported Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_viewAccountParsedTime-time
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='viewAccountTimer' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+2
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+Actual Time
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+SugarCRM Basic Functions_viewAccountTimer
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
+</object>
+</objects>
