@@ -5,6 +5,7 @@
 ######################################################################
 
 import Globals
+import os
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.ZenModel.ZenPack import ZenPackBase
 
