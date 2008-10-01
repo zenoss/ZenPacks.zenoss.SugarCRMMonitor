@@ -25,6 +25,9 @@ True
 <property type="text" id="description" mode="w" >
 SugarCRM web transaction tests
 </property>
+<property type="string" id="targetPythonClass" mode="w" >
+Products.ZenModel.Device
+</property>
 <tomanycont id='datasources'>
 <object id='SugarCRM Basic Functions' module='ZenPacks.zenoss.ZenWebTx.datasources.WebTxDataSource' class='WebTxDataSource'>
 <property select_variable="sourcetypes" type="selection" id="sourcetype" mode="w" >
