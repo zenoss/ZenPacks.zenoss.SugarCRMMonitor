@@ -74,7 +74,7 @@ notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on
 notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
 notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
 find "All Rights Reserved."       # footer text indicates entire page loaded
-extract submitLoginParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+extract submitLoginParsedTime-time "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
 
 # Go to accounts listing
 
@@ -86,7 +86,7 @@ notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on
 notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
 notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
 find "All Rights Reserved."       # footer text indicates entire page loaded
-extract viewAccountsParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+extract viewAccountsParsedTime-time "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
 
 # Bring up an account
 
@@ -99,7 +99,7 @@ notfind "&lt;b&gt;Notice&lt;/b&gt;:"          # make sure no php errors found on
 notfind "&lt;b&gt;Error&lt;/b&gt;:"           # make sure no php errors found on page
 notfind "&lt;b&gt;Warning&lt;/b&gt;:"         # make sure no php errors found on page
 find "All Rights Reserved."       # footer text indicates entire page loaded
-extract viewAccountParsedTime "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
+extract viewAccountParsedTime-time "Server response time: (?P&lt;time&gt;[0-9\.]*) seconds"
 
 # Logout
 find "Logout"
