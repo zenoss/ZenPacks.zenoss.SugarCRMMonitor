@@ -22,7 +22,7 @@ class ZenPack(ZenPackBase):
     packZProperties = [
             ('zSugarCRMBase', '', 'string'),
             ('zSugarCRMUsername', 'zenoss', 'string'),
-            ('zSugarCRMPassword', 'zenoss123', 'string'),
+            ('zSugarCRMPassword', 'zenoss123', 'password'),
             ('zSugarCRMTestAccount', 'SugarCRM', 'string'),
             ]
 
