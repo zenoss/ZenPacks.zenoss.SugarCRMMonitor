@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference
+  PUBLIC "urn:pubid:zenoss.com:doctypes:dita:dtd:reference" "reference.dtd">
+<reference id="d57e67"><title>Configuring <ph conkeyref="names/platform"/></title><refbody><section><p>All SugarCRM devices must exist under the <filepath>/Devices/Web/SugarCRM</filepath> device class.</p><ol>
+        <li>
+          <p>Navigate to the device or device class under the <filepath>/Devices/Server/Tomcat</filepath> device class in
+          the <ph conkeyref="names/platform"/>
+          interface.</p>
+
+          <ul>
+            <li>
+              <p>If applying changes to a device class:</p>
+
+              <ol>
+                <li>
+                  <p>Select the class in the devices hierarchy.</p>
+                </li>
+
+                <li>
+                  <p>Click <b>Details</b>.</p>
+                </li>
+
+                <li>
+                  <p>Select Configuration Properties.</p>
+                </li>
+              </ol>
+            </li>
+
+            <li>
+              <p>If applying changes to a device:</p>
+
+              <ol>
+                <li>
+                  <p>Click the device in the device list.</p>
+                </li>
+
+                <li>
+                  <p>Select Configuration Properties.</p>
+                </li>
+              </ol>
+            </li>
+          </ul>
+        </li>
+
+        <li>
+          <p>Edit the appropriate configuration properties for the device
+          or devices.</p>
+
+          <table>
+            <title>SugarCRM Configuration Properties</title>
+
+            <tgroup cols="2">
+              <thead>
+                <row>
+                  <entry>Name</entry>
+
+                  <entry>Description</entry>
+                </row>
+              </thead>
+
+              <tbody>
+                <row>
+                  <entry><p>zSugarCRMBase</p></entry>
+
+                  <entry><p/></entry>
+                </row>
+
+                <row>
+                  <entry><p>zSugarCRMPassword</p></entry>
+
+                  <entry><p>Password for the
+                  <varname>zSugarCRMUsername</varname> user.</p></entry>
+                </row>
+
+                <row>
+                  <entry><p>zSugarCRMTestAccount</p></entry>
+
+                  <entry><p/></entry>
+                </row>
+
+                <row>
+                  <entry><p>zSugarCRMUsername</p></entry>
+
+                  <entry><p>Username allowed to log into the Sugar CRM
+                  server.</p></entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+        </li>
+
+        <li>
+          <p>Click <uicontrol outputclass="guibutton">Save</uicontrol> to save your changes.</p>
+        </li>
+
+        <li>
+          <p>From the left panel, select Device under Monitoring
+          Templates.</p>
+        </li>
+
+        <li>
+          <p>Select Bind Templates from the Action menu.</p>
+
+          <p>The Bind Templates dialog appears.</p>
+        </li>
+
+        <li>
+          <p>Move the SugarCRM template from the Available list to the
+          Selected list.</p>
+        </li>
+
+        <li>
+          <p>Click <b>Save</b>.</p>
+
+          <p>The <uicontrol outputclass="guilabel">SugarCRM</uicontrol> template should now be
+          displayed under the <uicontrol outputclass="guilabel">Monitoring Templates for
+          <varname outputclass="replaceable">Device</varname></uicontrol>. You will now be able
+          to start collecting the Sugar CRM metrics from this device.</p>
+        </li>
+
+        <li>
+          <p>Navigate to Graphs and you should see some placeholders for
+          graphs. After approximately fifteen minutes you should see the
+          graphs start to become populated with information.</p>
+        </li>
+      </ol></section></refbody></reference>

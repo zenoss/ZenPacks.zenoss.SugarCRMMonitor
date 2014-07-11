@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map
+  PUBLIC "urn:pubid:zenoss.com:doctypes:dita:dtd:map" "map.dtd">
+<map>
+   <title>SugarCRMMonitor</title>
+   <topicref href="topics/SugarCRMMonitor.dita">
+      <topicref href="topics/SugarCRMMonitor_ref-Prerequisites.dita"/>
+      <topicref href="topics/SugarCRMMonitor_ref-Configuring-Resource-Manager.dita"/>
+      <topicref href="topics/SugarCRMMonitor_ref-Daemons.dita"/>
+   </topicref>
+</map>
